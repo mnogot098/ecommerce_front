@@ -1,19 +1,14 @@
 import React,{useState,useEffect} from 'react'
 import Header from '../Header'
-import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Card from 'react-bootstrap/Card';
-import Badge from 'react-bootstrap/Badge';
-import {Link,useNavigate} from 'react-router-dom';
-
+import {Button,Form,Modal,Badge,Card,InputGroup,Table} from 'react-bootstrap';
+import {useNavigate} from 'react-router-dom';
 
 function ProductList() {
   const [data,setData] = useState([]);
   const [product,setProduct] = useState({});
   const [show, setShow] = useState(false);
+  const [input,setInput] = useState('');
   const handleClose = () => setShow(false);
-  const navigate = useNavigate();
 
  const getProduct = async (id) => {
     let result = await fetch('http://localhost:8000/api/products/'+id)
@@ -31,6 +26,10 @@ function ProductList() {
     result = await result.json();
     setData(result.products);
   };
+
+  const SearchProduct = (e) => {
+    setData(data.filter(item => item.name.includes(input)));
+  }
 
 useEffect(() => {
     getProducts();
@@ -50,6 +49,15 @@ const DeleteProduct = async (id) =>
     <div>
         <Header/>
         <h1>Product listing</h1>
+        <InputGroup className='col-sm-6 offset-sm-9 my-5' name="input" onChange={(e) =>{setInput(e.target.value)}} value={input}>
+        <Button onClick={SearchProduct} variant="success" id="button-addon1">
+          Search
+        </Button>
+        <Form.Control
+          aria-label="Example text with button addon"
+          aria-describedby="basic-addon1"
+        />
+      </InputGroup>
         <Table striped>
       <thead>
         <tr>
